@@ -29,6 +29,8 @@ export function normalizeCard(card: ScryfallCard): NormalizedCard[] {
   const finishes: ScryfallFinish[] =
     card.finishes.length > 0 ? card.finishes : ["nonfoil"];
 
+  const legalities = card.legalities ? JSON.stringify(card.legalities) : null;
+
   return finishes.map(
     (finish): NormalizedCard => ({
       scryfall_id: `${card.id}:${finish}`,
@@ -40,6 +42,7 @@ export function normalizeCard(card: ScryfallCard): NormalizedCard[] {
       image_url,
       oracle_id: card.oracle_id,
       cached_at,
+      legalities,
     })
   );
 }

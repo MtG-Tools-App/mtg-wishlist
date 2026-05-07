@@ -15,12 +15,42 @@ type FormState = {
 };
 
 const DEFAULT_FORM: FormState = {
-  format_tag: "premodern",
+  format_tag: "",
   condition_min: "",
   target_price: "",
   priority: "3",
   notes: "",
 };
+
+const ALL_FORMAT_OPTIONS = [
+  { value: "premodern",     label: "Premodern" },
+  { value: "middle_school", label: "Middle School" },
+  { value: "other",         label: "その他" },
+] as const;
+
+function getFormatOptions(legalities: string | null) {
+  if (!legalities) return ALL_FORMAT_OPTIONS;
+  try {
+    const parsed = JSON.parse(legalities) as Record<string, string>;
+    const premodernLegal = parsed.premodern === "legal";
+    return ALL_FORMAT_OPTIONS.filter((opt) => {
+      if (opt.value === "premodern" || opt.value === "middle_school") return premodernLegal;
+      return true;
+    });
+  } catch {
+    return ALL_FORMAT_OPTIONS;
+  }
+}
+
+function getDefaultFormatTag(legalities: string | null): string {
+  if (!legalities) return "premodern";
+  try {
+    const parsed = JSON.parse(legalities) as Record<string, string>;
+    return parsed.premodern === "legal" ? "premodern" : "other";
+  } catch {
+    return "premodern";
+  }
+}
 
 export function AddPageClient() {
   const router = useRouter();
@@ -43,9 +73,9 @@ export function AddPageClient() {
     });
   }
 
-  function handleExpand(id: string) {
+  function handleExpand(id: string, legalities: string | null) {
     setExpandedId((prev) => (prev === id ? null : id));
-    setFormState(DEFAULT_FORM);
+    setFormState({ ...DEFAULT_FORM, format_tag: getDefaultFormatTag(legalities) });
     setAddError(null);
   }
 
@@ -133,7 +163,7 @@ export function AddPageClient() {
                   </p>
                 </div>
                 <button
-                  onClick={() => handleExpand(card.scryfall_id)}
+                  onClick={() => handleExpand(card.scryfall_id, card.legalities)}
                   className="text-xs shrink-0 px-2 py-1 rounded border border-zinc-700 text-zinc-400 hover:border-indigo-500 hover:text-indigo-400 transition-colors"
                 >
                   {expandedId === card.scryfall_id ? "閉じる" : "このカードを追加"}
@@ -144,8 +174,8 @@ export function AddPageClient() {
               {expandedId === card.scryfall_id && (
                 <div className="border-t border-zinc-800 bg-zinc-950 p-3 flex flex-col gap-3">
                   <div className="grid grid-cols-2 gap-2">
-                    <label className="flex flex-col gap-1">
-                      <span className="text-zinc-400 text-xs">フォーマット</span>
+                    <label className="flex flex-col gap-1 col-span-2">
+                      <span className="text-zinc-400 text-xs">このカードを自分はどのフォーマットで使いたいか</span>
                       <select
                         value={formState.format_tag}
                         onChange={(e) =>
@@ -153,10 +183,12 @@ export function AddPageClient() {
                         }
                         className="bg-zinc-800 border border-zinc-700 text-zinc-100 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                       >
-                        <option value="">— なし —</option>
-                        <option value="premodern">Premodern</option>
-                        <option value="middle_school">Middle School</option>
-                        <option value="other">Other</option>
+                        <option value="">選択してください</option>
+                        {getFormatOptions(card.legalities).map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
                       </select>
                     </label>
 

@@ -127,20 +127,26 @@ export async function upsertCard(card: {
   image_url: string | null;
   oracle_id: string;
   cached_at: number;
+  legalities: string | null;
 }): Promise<void> {
   await run(
     `INSERT INTO cards
-       (scryfall_id, name_en, name_ja, set_code, collector_number, finish, image_url, oracle_id, cached_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+       (scryfall_id, name_en, name_ja, set_code, collector_number, finish, image_url, oracle_id, cached_at, legalities)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(scryfall_id) DO UPDATE SET
-       name_ja   = excluded.name_ja,
-       cached_at = excluded.cached_at`,
+       name_ja    = excluded.name_ja,
+       legalities = excluded.legalities,
+       cached_at  = excluded.cached_at`,
     [
       card.scryfall_id, card.name_en, card.name_ja, card.set_code,
       card.collector_number, card.finish, card.image_url, card.oracle_id,
-      card.cached_at,
+      card.cached_at, card.legalities,
     ]
   );
+}
+
+export async function deleteWishlistItem(id: number): Promise<void> {
+  await run(`DELETE FROM wishlist_items WHERE id = ?`, [id]);
 }
 
 export async function insertWishlistItem(item: {

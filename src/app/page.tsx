@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { getWishlistItems, type WishlistRow } from "@/lib/db/queries";
 import { FilterTabs } from "@/components/FilterTabs";
+import { DeleteButton } from "@/components/DeleteButton";
 
 export default async function WishlistPage({
   searchParams,
@@ -110,7 +111,7 @@ function WishlistCard({ item }: { item: WishlistRow }) {
         <PriceSection item={item} state={state} />
 
         {/* Actions */}
-        <div className="flex gap-2 mt-0.5 flex-wrap">
+        <div className="flex gap-2 mt-0.5 flex-wrap items-center">
           <a
             href={wgUrl}
             target="_blank"
@@ -129,6 +130,7 @@ function WishlistCard({ item }: { item: WishlistRow }) {
           >
             価格を記録
           </Link>
+          <DeleteButton id={item.id} name_en={item.name_en} />
         </div>
       </div>
     </li>

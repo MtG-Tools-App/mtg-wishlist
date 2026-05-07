@@ -9,6 +9,10 @@ export const AddToWishlistSchema = z.object({
   notes: z.string().max(500).nullable(),
 });
 
+export const DeleteWishlistItemSchema = z.object({
+  id: z.number().int().positive(),
+});
+
 export const LogPriceSchema = z.object({
   wishlist_item_id: z.number().int().positive(),
   price: z.number().int().nonnegative(),

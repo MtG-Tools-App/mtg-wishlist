@@ -41,6 +41,8 @@ export interface ScryfallCard {
   image_uris?: ScryfallImageUris;
   /** Present for double-faced / multi-faced cards */
   card_faces?: ScryfallCardFace[];
+  /** Format legality map, e.g. { premodern: "legal", legacy: "not_legal" } */
+  legalities: Record<string, string>;
 }
 
 export interface ScryfallSearchResponse {
@@ -78,4 +80,6 @@ export interface NormalizedCard {
   image_url: string | null;
   oracle_id: string;
   cached_at: number;
+  /** JSON-serialized legalities map; null for legacy rows without this data */
+  legalities: string | null;
 }

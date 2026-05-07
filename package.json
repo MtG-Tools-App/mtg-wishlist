@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "db:init": "tsx src/lib/db/init.ts",
+    "db:migrate": "tsx src/lib/db/migrate.ts",
     "test:scryfall": "tsx scripts/test-scryfall.ts",
     "db:seed": "tsx scripts/seed-demo.ts"
   },

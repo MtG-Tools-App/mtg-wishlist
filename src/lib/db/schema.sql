@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS cards (
   finish           TEXT    NOT NULL CHECK (finish IN ('nonfoil', 'foil', 'etched')),
   image_url        TEXT,
   oracle_id        TEXT    NOT NULL,
-  cached_at        INTEGER NOT NULL
+  cached_at        INTEGER NOT NULL,
+  legalities       TEXT
 );
 
 CREATE TABLE IF NOT EXISTS wishlist_items (
