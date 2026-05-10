@@ -49,25 +49,48 @@ function containsJapanese(s: string): boolean {
 /**
  * Searches cards by query string.
  *
- * When the query contains Japanese characters, prepends `lang:ja` so Scryfall
- * returns the Japanese prints with printed_name populated.
- * Returns up to 20 Scryfall card objects, each expanded per finish.
- * Returns an empty array when Scryfall responds with 404 (no results).
+ * Japanese queries use a two-step lookup so English-only special prints
+ * (Borderless, Old-Frame, Showcase, etc. that lack a JA release) are not
+ * filtered out by `lang:ja`: first resolve the oracle_id from a JA search,
+ * then return every printing for that oracle.
  */
 export async function searchCards(query: string): Promise<NormalizedCard[]> {
-  const scryfallQuery = containsJapanese(query) ? `lang:ja ${query}` : query;
-  // unique=prints: return one row per printing so all expansions/sets are visible
-  // (default unique=cards collapses to one printing per oracle_id).
-  // order=released&dir=asc: oldest printing first.
-  const url = `${BASE_URL}/cards/search?q=${encodeURIComponent(scryfallQuery)}&unique=prints&order=released&dir=asc&page_size=20`;
+  if (containsJapanese(query)) return searchByJapaneseName(query);
+  return searchAllPrintings(query);
+}
+
+async function searchByJapaneseName(query: string): Promise<NormalizedCard[]> {
+  // Step 1: find oracle_ids whose JA print matches the query.
+  const jaUrl = `${BASE_URL}/cards/search?q=${encodeURIComponent(`lang:ja ${query}`)}&unique=cards&page_size=20`;
+  const jaRes = await rateLimitedFetch(jaUrl);
+  if (jaRes.status === 404) return [];
+  await assertOk(jaRes, `searchByJapaneseName.find("${query}")`);
+
+  const jaBody: ScryfallSearchResponse = await jaRes.json();
+  const oracleIds = Array.from(new Set(jaBody.data.map((c) => c.oracle_id)));
+  if (oracleIds.length === 0) return [];
+
+  // Step 2: fetch every printing for those oracles, regardless of language.
+  const orQuery = oracleIds.map((id) => `oracleid:${id}`).join(" or ");
+  return searchAllPrintings(`(${orQuery})`, 100);
+}
+
+async function searchAllPrintings(
+  scryfallQuery: string,
+  pageSize = 50
+): Promise<NormalizedCard[]> {
+  // unique=prints: one row per printing so every set/frame variant is visible.
+  // include_variations=true: surfaces art variants (e.g. Dragonscale Foil).
+  const url =
+    `${BASE_URL}/cards/search?q=${encodeURIComponent(scryfallQuery)}` +
+    `&unique=prints&include_variations=true&order=released&dir=asc&page_size=${pageSize}`;
   const res = await rateLimitedFetch(url);
 
   if (res.status === 404) return [];
-  await assertOk(res, `search("${query}")`);
+  await assertOk(res, `searchAllPrintings("${scryfallQuery}")`);
 
   const body: ScryfallSearchResponse = await res.json();
-  // Scryfall may return more than 20 on some queries; enforce our cap.
-  return body.data.slice(0, 20).flatMap(normalizeCard);
+  return body.data.slice(0, pageSize).flatMap(normalizeCard);
 }
 
 /**

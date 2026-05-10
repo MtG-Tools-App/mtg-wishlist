@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS cards (
 CREATE TABLE IF NOT EXISTS wishlist_items (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   scryfall_id    TEXT    NOT NULL REFERENCES cards(scryfall_id),
-  format_tag     TEXT    CHECK (format_tag IN ('premodern', 'middle_school', 'other')),
+  format_tag     TEXT,
   condition_min  TEXT    CHECK (condition_min IN ('NM', 'EX', 'GD')),
   target_price   INTEGER,
   priority       INTEGER CHECK (priority BETWEEN 1 AND 5),

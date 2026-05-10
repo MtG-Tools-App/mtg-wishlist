@@ -25,6 +25,9 @@ const DEFAULT_FORM: FormState = {
 const ALL_FORMAT_OPTIONS = [
   { value: "premodern",     label: "Premodern" },
   { value: "middle_school", label: "Middle School" },
+  { value: "modern",        label: "Modern" },
+  { value: "pauper",        label: "Pauper" },
+  { value: "legacy",        label: "Legacy" },
   { value: "other",         label: "その他" },
 ] as const;
 
@@ -32,10 +35,11 @@ function getFormatOptions(legalities: string | null) {
   if (!legalities) return ALL_FORMAT_OPTIONS;
   try {
     const parsed = JSON.parse(legalities) as Record<string, string>;
-    const premodernLegal = parsed.premodern === "legal";
     return ALL_FORMAT_OPTIONS.filter((opt) => {
-      if (opt.value === "premodern" || opt.value === "middle_school") return premodernLegal;
-      return true;
+      if (opt.value === "other") return true;
+      // Middle School is a Premodern subset and not a Scryfall format.
+      if (opt.value === "middle_school") return parsed.premodern === "legal";
+      return parsed[opt.value] === "legal";
     });
   } catch {
     return ALL_FORMAT_OPTIONS;

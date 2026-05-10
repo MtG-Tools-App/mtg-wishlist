@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const AddToWishlistSchema = z.object({
   scryfall_id: z.string().min(1),
-  format_tag: z.enum(["premodern", "middle_school", "other"]).nullable(),
+  format_tag: z.enum(["premodern", "middle_school", "modern", "pauper", "legacy", "other"]).nullable(),
   condition_min: z.enum(["NM", "EX", "GD"]).nullable(),
   target_price: z.number().int().nonnegative().nullable(),
   priority: z.number().int().min(1).max(5).nullable(),

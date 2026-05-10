@@ -6,6 +6,9 @@ const TABS = [
   { label: "All", value: "" },
   { label: "Premodern", value: "premodern" },
   { label: "Middle School", value: "middle_school" },
+  { label: "Modern", value: "modern" },
+  { label: "Pauper", value: "pauper" },
+  { label: "Legacy", value: "legacy" },
   { label: "Other", value: "other" },
 ] as const;
 
