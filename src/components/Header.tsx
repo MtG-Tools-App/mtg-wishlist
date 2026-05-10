@@ -1,15 +1,30 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 
 export function Header() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  function handleTitleClick() {
+    if (pathname === "/") {
+      router.refresh();
+    } else {
+      router.push("/");
+    }
+  }
+
   return (
     <header className="sticky top-0 z-20 bg-zinc-900 border-b border-zinc-800">
       <div className="max-w-2xl mx-auto px-4 h-12 flex items-center justify-between">
-        <Link
-          href="/"
+        <button
+          onClick={handleTitleClick}
           className="text-zinc-100 font-semibold tracking-tight text-sm"
+          aria-label="ホームへ移動して再読み込み"
         >
           MtG Wishlist
-        </Link>
+        </button>
         <nav className="flex gap-5 text-sm">
           <Link
             href="/"
