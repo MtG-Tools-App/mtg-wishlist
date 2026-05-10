@@ -7,11 +7,11 @@ import { ErrorMessage } from "@/components/ErrorMessage";
 import type { WishlistRow } from "@/lib/db/queries";
 
 const ALL_FORMAT_OPTIONS = [
+  { value: "modern",        label: "Modern" },
+  { value: "legacy",        label: "Legacy" },
+  { value: "pauper",        label: "Pauper" },
   { value: "premodern",     label: "Premodern" },
   { value: "middle_school", label: "Middle School" },
-  { value: "modern",        label: "Modern" },
-  { value: "pauper",        label: "Pauper" },
-  { value: "legacy",        label: "Legacy" },
   { value: "other",         label: "その他" },
 ] as const;
 
