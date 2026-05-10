@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { searchCards as scryfallSearch, fetchJapaneseName } from "@/lib/scryfall/client";
-import { upsertCard, insertWishlistItem } from "@/lib/db/queries";
-import { AddToWishlistSchema } from "@/lib/validation/schemas";
+import { upsertCard, insertWishlistItem, updateWishlistItem } from "@/lib/db/queries";
+import { AddToWishlistSchema, UpdateWishlistItemSchema } from "@/lib/validation/schemas";
 import type { ActionResult } from "./types";
 import type { NormalizedCard } from "@/lib/scryfall/types";
 
@@ -54,6 +54,32 @@ export async function addToWishlistAction(data: {
       notes: parsed.data.notes,
       created_at: Math.floor(Date.now() / 1000),
     });
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "不明なエラー" };
+  }
+
+  revalidatePath("/");
+  return { ok: true };
+}
+
+export async function updateWishlistItemAction(data: {
+  id: number;
+  format_tag: string | null;
+  condition_min: string | null;
+  target_price: number | null;
+  priority: number | null;
+  notes: string | null;
+}): Promise<ActionResult> {
+  const parsed = UpdateWishlistItemSchema.safeParse(data);
+  if (!parsed.success) {
+    return {
+      ok: false,
+      error: parsed.error.issues.map((i) => i.message).join(", "),
+    };
+  }
+
+  try {
+    await updateWishlistItem(parsed.data);
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "不明なエラー" };
   }

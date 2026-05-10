@@ -121,14 +121,10 @@ function WishlistCard({ item }: { item: WishlistRow }) {
             Wisdom Guild ↗
           </a>
           <Link
-            href={`/item/${item.id}/log`}
-            className={`text-xs px-2 py-0.5 rounded transition-colors ${
-              state === "unconfirmed"
-                ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-indigo-600 ring-1 ring-indigo-200/40"
-                : "bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
-            }`}
+            href={`/item/${item.id}/edit`}
+            className="text-xs px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
           >
-            価格を記録
+            編集
           </Link>
           <DeleteButton id={item.id} name_en={item.name_en} />
         </div>
@@ -217,5 +213,8 @@ function stars(priority: number) {
 function formatLabel(tag: string) {
   if (tag === "premodern") return "Premodern";
   if (tag === "middle_school") return "Middle School";
+  if (tag === "modern") return "Modern";
+  if (tag === "pauper") return "Pauper";
+  if (tag === "legacy") return "Legacy";
   return "Other";
 }

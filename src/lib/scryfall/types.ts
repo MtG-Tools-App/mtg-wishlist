@@ -80,6 +80,8 @@ export interface NormalizedCard {
   name_ja: string | null;
   set_code: string;
   collector_number: string;
+  /** ISO 639-1 language code of this printing (e.g. "en", "ja") */
+  lang: string;
   finish: ScryfallFinish;
   image_url: string | null;
   oracle_id: string;

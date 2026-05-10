@@ -56,6 +56,34 @@ function getDefaultFormatTag(legalities: string | null): string {
   }
 }
 
+type LangFilter = "all" | "ja" | "en";
+type FinishFilter = "all" | "foil" | "nonfoil";
+
+const LANG_OPTIONS: { value: LangFilter; label: string }[] = [
+  { value: "all", label: "全言語" },
+  { value: "ja", label: "日本語" },
+  { value: "en", label: "英語" },
+];
+
+const FINISH_OPTIONS: { value: FinishFilter; label: string }[] = [
+  { value: "all", label: "全種" },
+  { value: "nonfoil", label: "通常" },
+  { value: "foil", label: "Foil" },
+];
+
+function matchesLang(card: NormalizedCard, filter: LangFilter): boolean {
+  if (filter === "all") return true;
+  if (filter === "ja") return card.lang === "ja";
+  // EN excludes JA explicitly; other foreign languages still pass.
+  return card.lang !== "ja";
+}
+
+function matchesFinish(card: NormalizedCard, filter: FinishFilter): boolean {
+  if (filter === "all") return true;
+  if (filter === "foil") return card.finish === "foil" || card.finish === "etched";
+  return card.finish === "nonfoil";
+}
+
 export function AddPageClient() {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -66,6 +94,24 @@ export function AddPageClient() {
   const [searchPending, startSearch] = useTransition();
   const [addPending, startAdd] = useTransition();
   const [searched, setSearched] = useState(false);
+  const [langFilter, setLangFilter] = useState<LangFilter>("all");
+  const [finishFilter, setFinishFilter] = useState<FinishFilter>("all");
+
+  const filteredResults = results.filter(
+    (c) => matchesLang(c, langFilter) && matchesFinish(c, finishFilter)
+  );
+
+  function cycleLang(direction: 1 | -1) {
+    const idx = LANG_OPTIONS.findIndex((o) => o.value === langFilter);
+    const next = (idx + direction + LANG_OPTIONS.length) % LANG_OPTIONS.length;
+    setLangFilter(LANG_OPTIONS[next].value);
+  }
+
+  function cycleFinish(direction: 1 | -1) {
+    const idx = FINISH_OPTIONS.findIndex((o) => o.value === finishFilter);
+    const next = (idx + direction + FINISH_OPTIONS.length) % FINISH_OPTIONS.length;
+    setFinishFilter(FINISH_OPTIONS[next].value);
+  }
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -126,16 +172,32 @@ export function AddPageClient() {
         <p className="text-xs text-zinc-500">例: Lightning Bolt または 稲妻</p>
       </div>
 
+      {/* Filters — visible only after a successful search */}
+      {results.length > 0 && (
+        <div className="flex gap-2 flex-wrap">
+          <FilterStepper
+            current={LANG_OPTIONS.find((o) => o.value === langFilter)!.label}
+            onPrev={() => cycleLang(-1)}
+            onNext={() => cycleLang(1)}
+          />
+          <FilterStepper
+            current={FINISH_OPTIONS.find((o) => o.value === finishFilter)!.label}
+            onPrev={() => cycleFinish(-1)}
+            onNext={() => cycleFinish(1)}
+          />
+        </div>
+      )}
+
       {/* Results */}
-      {searched && results.length === 0 && !searchPending && (
+      {searched && filteredResults.length === 0 && !searchPending && (
         <p className="text-zinc-500 text-sm text-center py-8">
           カードが見つかりませんでした
         </p>
       )}
 
-      {results.length > 0 && (
+      {filteredResults.length > 0 && (
         <ul className="flex flex-col gap-2">
-          {results.map((card) => (
+          {filteredResults.map((card) => (
             <li
               key={card.scryfall_id}
               className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden"
@@ -272,6 +334,40 @@ export function AddPageClient() {
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+function FilterStepper({
+  current,
+  onPrev,
+  onNext,
+}: {
+  current: string;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  return (
+    <div className="inline-flex items-stretch rounded-md border border-zinc-700 overflow-hidden bg-zinc-900">
+      <button
+        type="button"
+        onClick={onPrev}
+        className="px-2 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors"
+        aria-label="前の選択肢"
+      >
+        ◀
+      </button>
+      <span className="px-3 py-1 text-xs text-zinc-200 self-center min-w-[4em] text-center">
+        {current}
+      </span>
+      <button
+        type="button"
+        onClick={onNext}
+        className="px-2 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors"
+        aria-label="次の選択肢"
+      >
+        ▶
+      </button>
     </div>
   );
 }

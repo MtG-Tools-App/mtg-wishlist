@@ -38,6 +38,7 @@ export function normalizeCard(card: ScryfallCard): NormalizedCard[] {
       name_ja,
       set_code: card.set,
       collector_number: card.collector_number,
+      lang: card.lang,
       finish,
       image_url,
       oracle_id: card.oracle_id,

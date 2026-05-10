@@ -37,6 +37,7 @@ export interface WishlistRow {
   finish: string;
   image_url: string | null;
   collector_number: string;
+  legalities: string | null;
   latest_price: number | null;
   latest_shop: string | null;
   latest_logged_at: number | null;
@@ -60,7 +61,7 @@ const WISHLIST_SELECT = `
   SELECT
     wi.id, wi.scryfall_id, wi.format_tag, wi.condition_min,
     wi.target_price, wi.priority, wi.notes, wi.created_at,
-    c.name_en, c.name_ja, c.set_code, c.finish, c.image_url, c.collector_number,
+    c.name_en, c.name_ja, c.set_code, c.finish, c.image_url, c.collector_number, c.legalities,
     pl.price      AS latest_price,
     pl.shop       AS latest_shop,
     pl.logged_at  AS latest_logged_at,
@@ -147,6 +148,22 @@ export async function upsertCard(card: {
 
 export async function deleteWishlistItem(id: number): Promise<void> {
   await run(`DELETE FROM wishlist_items WHERE id = ?`, [id]);
+}
+
+export async function updateWishlistItem(item: {
+  id: number;
+  format_tag: string | null;
+  condition_min: string | null;
+  target_price: number | null;
+  priority: number | null;
+  notes: string | null;
+}): Promise<void> {
+  await run(
+    `UPDATE wishlist_items
+       SET format_tag = ?, condition_min = ?, target_price = ?, priority = ?, notes = ?
+     WHERE id = ?`,
+    [item.format_tag, item.condition_min, item.target_price, item.priority, item.notes, item.id]
+  );
 }
 
 export async function insertWishlistItem(item: {

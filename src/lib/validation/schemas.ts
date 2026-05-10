@@ -13,6 +13,15 @@ export const DeleteWishlistItemSchema = z.object({
   id: z.number().int().positive(),
 });
 
+export const UpdateWishlistItemSchema = z.object({
+  id: z.number().int().positive(),
+  format_tag: z.enum(["premodern", "middle_school", "modern", "pauper", "legacy", "other"]).nullable(),
+  condition_min: z.enum(["NM", "EX", "GD"]).nullable(),
+  target_price: z.number().int().nonnegative().nullable(),
+  priority: z.number().int().min(1).max(5).nullable(),
+  notes: z.string().max(500).nullable(),
+});
+
 export const LogPriceSchema = z.object({
   wishlist_item_id: z.number().int().positive(),
   price: z.number().int().nonnegative(),
