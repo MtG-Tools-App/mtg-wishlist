@@ -43,6 +43,10 @@ export interface ScryfallCard {
   card_faces?: ScryfallCardFace[];
   /** Format legality map, e.g. { premodern: "legal", legacy: "not_legal" } */
   legalities: Record<string, string>;
+  /** True for MTGO/Arena-only printings that don't exist as paper cards */
+  digital?: boolean;
+  /** Which game clients carry this printing — paper, mtgo, arena, astral */
+  games?: string[];
 }
 
 export interface ScryfallSearchResponse {

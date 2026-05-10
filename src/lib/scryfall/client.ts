@@ -90,7 +90,18 @@ async function searchAllPrintings(
   await assertOk(res, `searchAllPrintings("${scryfallQuery}")`);
 
   const body: ScryfallSearchResponse = await res.json();
-  return body.data.slice(0, pageSize).flatMap(normalizeCard);
+  return body.data
+    .filter(isPaperPrinting)
+    .slice(0, pageSize)
+    .flatMap(normalizeCard);
+}
+
+// MTGO/Arena-only printings (e.g. PRM #77967) never exist as paper cards,
+// so they're never useful for a physical-card wishlist.
+function isPaperPrinting(card: ScryfallCard): boolean {
+  if (card.digital === true) return false;
+  if (card.games && !card.games.includes("paper")) return false;
+  return true;
 }
 
 /**
