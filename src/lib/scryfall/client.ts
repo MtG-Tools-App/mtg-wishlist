@@ -56,7 +56,10 @@ function containsJapanese(s: string): boolean {
  */
 export async function searchCards(query: string): Promise<NormalizedCard[]> {
   const scryfallQuery = containsJapanese(query) ? `lang:ja ${query}` : query;
-  const url = `${BASE_URL}/cards/search?q=${encodeURIComponent(scryfallQuery)}&page_size=20`;
+  // unique=prints: return one row per printing so all expansions/sets are visible
+  // (default unique=cards collapses to one printing per oracle_id).
+  // order=released&dir=asc: oldest printing first.
+  const url = `${BASE_URL}/cards/search?q=${encodeURIComponent(scryfallQuery)}&unique=prints&order=released&dir=asc&page_size=20`;
   const res = await rateLimitedFetch(url);
 
   if (res.status === 404) return [];
