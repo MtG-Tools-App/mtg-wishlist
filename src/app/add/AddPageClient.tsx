@@ -179,7 +179,7 @@ export function AddPageClient() {
                 <div className="border-t border-zinc-800 bg-zinc-950 p-3 flex flex-col gap-3">
                   <div className="grid grid-cols-2 gap-2">
                     <label className="flex flex-col gap-1 col-span-2">
-                      <span className="text-zinc-400 text-xs">このカードを自分はどのフォーマットで使いたいか</span>
+                      <span className="text-zinc-400 text-xs">使用フォーマット</span>
                       <select
                         value={formState.format_tag}
                         onChange={(e) =>
