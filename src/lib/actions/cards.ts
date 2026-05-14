@@ -19,7 +19,6 @@ export async function addToWishlistAction(data: {
   format_tag: string | null;
   condition_min: string | null;
   target_price: number | null;
-  priority: number | null;
   notes: string | null;
 }): Promise<ActionResult> {
   const parsed = AddToWishlistSchema.safeParse({
@@ -27,7 +26,6 @@ export async function addToWishlistAction(data: {
     format_tag: data.format_tag,
     condition_min: data.condition_min,
     target_price: data.target_price,
-    priority: data.priority,
     notes: data.notes,
   });
 
@@ -50,7 +48,6 @@ export async function addToWishlistAction(data: {
       format_tag: parsed.data.format_tag,
       condition_min: parsed.data.condition_min,
       target_price: parsed.data.target_price,
-      priority: parsed.data.priority,
       notes: parsed.data.notes,
       created_at: Math.floor(Date.now() / 1000),
     });
@@ -67,7 +64,6 @@ export async function updateWishlistItemAction(data: {
   format_tag: string | null;
   condition_min: string | null;
   target_price: number | null;
-  priority: number | null;
   notes: string | null;
 }): Promise<ActionResult> {
   const parsed = UpdateWishlistItemSchema.safeParse(data);

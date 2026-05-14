@@ -3,8 +3,8 @@ import Link from "next/link";
 import { getWishlistItems, type WishlistRow } from "@/lib/db/queries";
 import { FilterTabs } from "@/components/FilterTabs";
 import { DeleteButton } from "@/components/DeleteButton";
-import { formatLabel } from "@/lib/format/formats";
-import { finishLabel } from "@/lib/format/finish";
+import { CardHeader } from "@/components/CardHeader";
+import type { ScryfallFinish } from "@/lib/scryfall/types";
 
 export default async function WishlistPage({
   searchParams,
@@ -71,49 +71,19 @@ function WishlistCard({ item }: { item: WishlistRow }) {
         state === "sold-out" ? " opacity-60" : ""
       }`}
     >
-      {item.image_url ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={item.image_url}
-          alt={item.name_en}
-          width={50}
-          height={70}
-          className="rounded shrink-0 object-cover self-start"
-          loading="lazy"
-        />
-      ) : (
-        <div className="w-[50px] h-[70px] bg-zinc-800 rounded shrink-0 flex items-center justify-center text-zinc-600 text-xs">
-          N/A
-        </div>
-      )}
-
-      <div className="flex-1 min-w-0 flex flex-col gap-1">
-        {/* Card name */}
-        <div>
-          <p className="text-zinc-100 text-sm font-medium leading-tight truncate">
-            {item.name_en}
-          </p>
-          {item.name_ja && (
-            <p className="text-zinc-400 text-xs leading-tight">{item.name_ja}</p>
-          )}
-        </div>
-
-        {/* Meta */}
+      <CardHeader
+        imageUrl={item.image_url}
+        nameEn={item.name_en}
+        nameJa={item.name_ja}
+        finish={item.finish as ScryfallFinish}
+      >
         <p className="text-zinc-500 text-xs">
-          {item.set_code.toUpperCase()} · {finishLabel(item.finish)}
-          {item.priority != null && (
-            <span className="ml-2 text-zinc-400">{stars(item.priority)}</span>
-          )}
-          {item.format_tag && (
-            <span className="ml-2 text-zinc-600">{formatLabel(item.format_tag)}</span>
-          )}
+          {item.set_code.toUpperCase()} #{item.collector_number}
         </p>
 
-        {/* Price section — 3 states */}
         <PriceSection item={item} state={state} />
 
-        {/* Actions */}
-        <div className="flex gap-2 mt-0.5 flex-wrap items-center">
+        <div className="flex gap-2 mt-1 flex-wrap items-center">
           <a
             href={wgUrl}
             target="_blank"
@@ -130,7 +100,7 @@ function WishlistCard({ item }: { item: WishlistRow }) {
           </Link>
           <DeleteButton id={item.id} name_en={item.name_en} />
         </div>
-      </div>
+      </CardHeader>
     </li>
   );
 }
@@ -203,8 +173,3 @@ function PriceSection({ item, state }: { item: WishlistRow; state: CardState }) 
 function formatYen(price: number) {
   return `¥${price.toLocaleString("ja-JP")}`;
 }
-
-function stars(priority: number) {
-  return "★".repeat(priority) + "☆".repeat(Math.max(0, 5 - priority));
-}
-

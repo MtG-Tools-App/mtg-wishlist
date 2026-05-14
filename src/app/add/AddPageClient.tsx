@@ -6,12 +6,12 @@ import { searchCardsAction, addToWishlistAction } from "@/lib/actions/cards";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import type { NormalizedCard } from "@/lib/scryfall/types";
 import { FORMAT_OPTIONS, getFormatOptions, getDefaultFormatTag } from "@/lib/format/formats";
+import { CardHeader } from "@/components/CardHeader";
 
 type FormState = {
   format_tag: string;
   condition_min: string;
   target_price: string;
-  priority: string;
   notes: string;
 };
 
@@ -19,7 +19,6 @@ const DEFAULT_FORM: FormState = {
   format_tag: "",
   condition_min: "",
   target_price: "",
-  priority: "3",
   notes: "",
 };
 
@@ -105,7 +104,6 @@ export function AddPageClient() {
         format_tag: formState.format_tag || null,
         condition_min: formState.condition_min || null,
         target_price: formState.target_price ? Number(formState.target_price) : null,
-        priority: formState.priority ? Number(formState.priority) : null,
         notes: formState.notes || null,
       });
       if (result.ok) {
@@ -172,30 +170,16 @@ export function AddPageClient() {
             >
               {/* Card row */}
               <div className="flex gap-3 p-3 items-start">
-                {card.image_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={card.image_url}
-                    alt={card.name_en}
-                    width={50}
-                    height={70}
-                    className="rounded shrink-0 object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="w-[50px] h-[70px] bg-zinc-800 rounded shrink-0" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-1.5 flex-wrap">
-                    <span className="text-zinc-100 text-sm font-medium leading-tight">
-                      {card.name_en}
-                    </span>
-                    <FinishBadge finish={card.finish} />
-                  </div>
-                  <p className="text-zinc-500 text-xs mt-0.5">
+                <CardHeader
+                  imageUrl={card.image_url}
+                  nameEn={card.name_en}
+                  nameJa={card.name_ja}
+                  finish={card.finish}
+                >
+                  <p className="text-zinc-500 text-xs">
                     {card.set_code.toUpperCase()} #{card.collector_number}
                   </p>
-                </div>
+                </CardHeader>
                 <button
                   onClick={() => handleExpand(card.scryfall_id, card.legalities)}
                   className="text-xs shrink-0 px-2 py-1 rounded border border-zinc-700 text-zinc-400 hover:border-indigo-500 hover:text-indigo-400 transition-colors"
@@ -256,22 +240,6 @@ export function AddPageClient() {
                       />
                     </label>
 
-                    <label className="flex flex-col gap-1">
-                      <span className="text-zinc-400 text-xs">優先度</span>
-                      <select
-                        value={formState.priority}
-                        onChange={(e) =>
-                          setFormState((s) => ({ ...s, priority: e.target.value }))
-                        }
-                        className="bg-zinc-800 border border-zinc-700 text-zinc-100 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                      >
-                        {[1, 2, 3, 4, 5].map((n) => (
-                          <option key={n} value={n}>
-                            {"★".repeat(n)}{"☆".repeat(5 - n)} ({n})
-                          </option>
-                        ))}
-                      </select>
-                    </label>
                   </div>
 
                   <label className="flex flex-col gap-1">
@@ -340,24 +308,3 @@ function FilterStepper({
   );
 }
 
-function FinishBadge({ finish }: { finish: string }) {
-  if (finish === "foil") {
-    return (
-      <span className="text-xs px-2 py-0.5 rounded bg-indigo-600 text-white font-medium shrink-0">
-        Foil
-      </span>
-    );
-  }
-  if (finish === "etched") {
-    return (
-      <span className="text-xs px-2 py-0.5 rounded bg-indigo-300 text-indigo-900 font-medium shrink-0">
-        Etched
-      </span>
-    );
-  }
-  return (
-    <span className="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 shrink-0">
-      通常
-    </span>
-  );
-}

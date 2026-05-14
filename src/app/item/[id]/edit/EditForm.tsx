@@ -13,7 +13,6 @@ export function EditForm({ item }: { item: WishlistRow }) {
     format_tag: item.format_tag ?? "",
     condition_min: item.condition_min ?? "",
     target_price: item.target_price?.toString() ?? "",
-    priority: item.priority?.toString() ?? "3",
     notes: item.notes ?? "",
   });
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +27,6 @@ export function EditForm({ item }: { item: WishlistRow }) {
         format_tag: formState.format_tag || null,
         condition_min: formState.condition_min || null,
         target_price: formState.target_price ? Number(formState.target_price) : null,
-        priority: formState.priority ? Number(formState.priority) : null,
         notes: formState.notes || null,
       });
       if (result.ok) {
@@ -90,22 +88,6 @@ export function EditForm({ item }: { item: WishlistRow }) {
           />
         </label>
 
-        <label className="flex flex-col gap-1 col-span-2">
-          <span className="text-zinc-400 text-xs">優先度</span>
-          <select
-            value={formState.priority}
-            onChange={(e) =>
-              setFormState((s) => ({ ...s, priority: e.target.value }))
-            }
-            className="bg-zinc-800 border border-zinc-700 text-zinc-100 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          >
-            {[1, 2, 3, 4, 5].map((n) => (
-              <option key={n} value={n}>
-                {"★".repeat(n)}{"☆".repeat(5 - n)} ({n})
-              </option>
-            ))}
-          </select>
-        </label>
       </div>
 
       <label className="flex flex-col gap-1">

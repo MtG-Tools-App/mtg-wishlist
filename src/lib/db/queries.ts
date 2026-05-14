@@ -28,7 +28,6 @@ export interface WishlistRow {
   format_tag: string | null;
   condition_min: string | null;
   target_price: number | null;
-  priority: number | null;
   notes: string | null;
   created_at: number;
   name_en: string;
@@ -60,7 +59,7 @@ export interface PriceLogRow {
 const WISHLIST_SELECT = `
   SELECT
     wi.id, wi.scryfall_id, wi.format_tag, wi.condition_min,
-    wi.target_price, wi.priority, wi.notes, wi.created_at,
+    wi.target_price, wi.notes, wi.created_at,
     c.name_en, c.name_ja, c.set_code, c.finish, c.image_url, c.collector_number, c.legalities,
     pl.price      AS latest_price,
     pl.shop       AS latest_shop,
@@ -83,14 +82,7 @@ export async function getWishlistItems(
   const sql = `
     ${WISHLIST_SELECT}
     ${where}
-    ORDER BY
-      COALESCE(wi.priority, 0) DESC,
-      CASE
-        WHEN pl.price IS NOT NULL AND wi.target_price IS NOT NULL
-          THEN pl.price - wi.target_price
-        ELSE 9999999
-      END ASC,
-      wi.created_at DESC
+    ORDER BY wi.created_at DESC
   `;
   return all<WishlistRow>(sql, formatTag ? [formatTag] : []);
 }
@@ -155,14 +147,13 @@ export async function updateWishlistItem(item: {
   format_tag: string | null;
   condition_min: string | null;
   target_price: number | null;
-  priority: number | null;
   notes: string | null;
 }): Promise<void> {
   await run(
     `UPDATE wishlist_items
-       SET format_tag = ?, condition_min = ?, target_price = ?, priority = ?, notes = ?
+       SET format_tag = ?, condition_min = ?, target_price = ?, notes = ?
      WHERE id = ?`,
-    [item.format_tag, item.condition_min, item.target_price, item.priority, item.notes, item.id]
+    [item.format_tag, item.condition_min, item.target_price, item.notes, item.id]
   );
 }
 
@@ -171,17 +162,16 @@ export async function insertWishlistItem(item: {
   format_tag: string | null;
   condition_min: string | null;
   target_price: number | null;
-  priority: number | null;
   notes: string | null;
   created_at: number;
 }): Promise<void> {
   await run(
     `INSERT INTO wishlist_items
-       (scryfall_id, format_tag, condition_min, target_price, priority, notes, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+       (scryfall_id, format_tag, condition_min, target_price, notes, created_at)
+     VALUES (?, ?, ?, ?, ?, ?)`,
     [
       item.scryfall_id, item.format_tag, item.condition_min,
-      item.target_price, item.priority, item.notes, item.created_at,
+      item.target_price, item.notes, item.created_at,
     ]
   );
 }
