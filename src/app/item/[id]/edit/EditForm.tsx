@@ -5,29 +5,7 @@ import { useRouter } from "next/navigation";
 import { updateWishlistItemAction } from "@/lib/actions/cards";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import type { WishlistRow } from "@/lib/db/queries";
-
-const ALL_FORMAT_OPTIONS = [
-  { value: "modern",        label: "Modern" },
-  { value: "legacy",        label: "Legacy" },
-  { value: "pauper",        label: "Pauper" },
-  { value: "premodern",     label: "Premodern" },
-  { value: "middle_school", label: "Middle School" },
-  { value: "other",         label: "その他" },
-] as const;
-
-function getFormatOptions(legalities: string | null) {
-  if (!legalities) return ALL_FORMAT_OPTIONS;
-  try {
-    const parsed = JSON.parse(legalities) as Record<string, string>;
-    return ALL_FORMAT_OPTIONS.filter((opt) => {
-      if (opt.value === "other") return true;
-      if (opt.value === "middle_school") return parsed.premodern === "legal";
-      return parsed[opt.value] === "legal";
-    });
-  } catch {
-    return ALL_FORMAT_OPTIONS;
-  }
-}
+import { getFormatOptions } from "@/lib/format/formats";
 
 export function EditForm({ item }: { item: WishlistRow }) {
   const router = useRouter();

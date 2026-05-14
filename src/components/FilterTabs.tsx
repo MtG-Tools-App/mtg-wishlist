@@ -1,16 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-
-const TABS = [
-  { label: "All", value: "" },
-  { label: "Modern", value: "modern" },
-  { label: "Legacy", value: "legacy" },
-  { label: "Pauper", value: "pauper" },
-  { label: "Premodern", value: "premodern" },
-  { label: "Middle School", value: "middle_school" },
-  { label: "Other", value: "other" },
-] as const;
+import { FILTER_TABS } from "@/lib/format/formats";
 
 export function FilterTabs() {
   const router = useRouter();
@@ -26,7 +17,7 @@ export function FilterTabs() {
 
   return (
     <div className="flex gap-1 mb-4 flex-wrap">
-      {TABS.map((tab) => (
+      {FILTER_TABS.map((tab) => (
         <button
           key={tab.value}
           onClick={() => handleTab(tab.value)}

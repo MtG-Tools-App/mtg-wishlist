@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWishlistItemById, getRecentPriceLogs } from "@/lib/db/queries";
 import { LogForm } from "./LogForm";
+import { finishLabel } from "@/lib/format/finish";
 
 export default async function LogPage({
   params,
@@ -114,6 +115,3 @@ export default async function LogPage({
   );
 }
 
-function finishLabel(finish: string) {
-  return finish === "foil" ? "Foil" : finish === "etched" ? "Etched" : "Non-foil";
-}

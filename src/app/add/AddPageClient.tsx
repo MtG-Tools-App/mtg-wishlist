@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { searchCardsAction, addToWishlistAction } from "@/lib/actions/cards";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import type { NormalizedCard } from "@/lib/scryfall/types";
+import { FORMAT_OPTIONS, getFormatOptions, getDefaultFormatTag } from "@/lib/format/formats";
 
 type FormState = {
   format_tag: string;
@@ -22,39 +23,6 @@ const DEFAULT_FORM: FormState = {
   notes: "",
 };
 
-const ALL_FORMAT_OPTIONS = [
-  { value: "modern",        label: "Modern" },
-  { value: "legacy",        label: "Legacy" },
-  { value: "pauper",        label: "Pauper" },
-  { value: "premodern",     label: "Premodern" },
-  { value: "middle_school", label: "Middle School" },
-  { value: "other",         label: "その他" },
-] as const;
-
-function getFormatOptions(legalities: string | null) {
-  if (!legalities) return ALL_FORMAT_OPTIONS;
-  try {
-    const parsed = JSON.parse(legalities) as Record<string, string>;
-    return ALL_FORMAT_OPTIONS.filter((opt) => {
-      if (opt.value === "other") return true;
-      // Middle School is a Premodern subset and not a Scryfall format.
-      if (opt.value === "middle_school") return parsed.premodern === "legal";
-      return parsed[opt.value] === "legal";
-    });
-  } catch {
-    return ALL_FORMAT_OPTIONS;
-  }
-}
-
-function getDefaultFormatTag(legalities: string | null): string {
-  if (!legalities) return "premodern";
-  try {
-    const parsed = JSON.parse(legalities) as Record<string, string>;
-    return parsed.premodern === "legal" ? "premodern" : "other";
-  } catch {
-    return "premodern";
-  }
-}
 
 type LangFilter = "all" | "ja" | "en";
 type FinishFilter = "all" | "foil" | "nonfoil";

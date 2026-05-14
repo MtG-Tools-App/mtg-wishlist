@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getWishlistItems, type WishlistRow } from "@/lib/db/queries";
 import { FilterTabs } from "@/components/FilterTabs";
 import { DeleteButton } from "@/components/DeleteButton";
+import { formatLabel } from "@/lib/format/formats";
+import { finishLabel } from "@/lib/format/finish";
 
 export default async function WishlistPage({
   searchParams,
@@ -202,19 +204,7 @@ function formatYen(price: number) {
   return `¥${price.toLocaleString("ja-JP")}`;
 }
 
-function finishLabel(finish: string) {
-  return finish === "foil" ? "Foil" : finish === "etched" ? "Etched" : "Non-foil";
-}
-
 function stars(priority: number) {
   return "★".repeat(priority) + "☆".repeat(Math.max(0, 5 - priority));
 }
 
-function formatLabel(tag: string) {
-  if (tag === "premodern") return "Premodern";
-  if (tag === "middle_school") return "Middle School";
-  if (tag === "modern") return "Modern";
-  if (tag === "pauper") return "Pauper";
-  if (tag === "legacy") return "Legacy";
-  return "Other";
-}

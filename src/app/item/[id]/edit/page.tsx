@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWishlistItemById } from "@/lib/db/queries";
 import { EditForm } from "./EditForm";
+import { finishLabel } from "@/lib/format/finish";
 
 export default async function EditPage({
   params,
@@ -58,6 +59,3 @@ export default async function EditPage({
   );
 }
 
-function finishLabel(finish: string) {
-  return finish === "foil" ? "Foil" : finish === "etched" ? "Etched" : "Non-foil";
-}
