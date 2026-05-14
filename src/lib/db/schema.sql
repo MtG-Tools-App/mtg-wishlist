@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS wishlist_items (
   format_tag     TEXT,
   condition_min  TEXT    CHECK (condition_min IN ('NM', 'EX', 'GD')),
   target_price   INTEGER,
-  priority       INTEGER CHECK (priority BETWEEN 1 AND 5),
   notes          TEXT,
   created_at     INTEGER NOT NULL
 );
@@ -33,8 +32,8 @@ CREATE TABLE IF NOT EXISTS price_logs (
   logged_at        INTEGER NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_wishlist_format_priority
-  ON wishlist_items (format_tag, priority);
+CREATE INDEX IF NOT EXISTS idx_wishlist_format
+  ON wishlist_items (format_tag);
 
 CREATE INDEX IF NOT EXISTS idx_price_logs_item_time
   ON price_logs (wishlist_item_id, logged_at DESC);

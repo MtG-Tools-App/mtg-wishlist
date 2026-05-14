@@ -49,6 +49,36 @@ function dropFormatTagCheck(db: Database.Database) {
   console.log("✓ format_tag CHECK constraint removed");
 }
 
+function migrateMiddleSchoolToPremodern(db: Database.Database) {
+  const row = db
+    .prepare("SELECT COUNT(*) AS cnt FROM wishlist_items WHERE format_tag = 'middle_school'")
+    .get() as { cnt: number };
+  if (row.cnt === 0) {
+    console.log("— No middle_school rows to migrate (skipped)");
+    return;
+  }
+  const info = db
+    .prepare("UPDATE wishlist_items SET format_tag = 'premodern' WHERE format_tag = 'middle_school'")
+    .run();
+  console.log(`✓ Renamed ${info.changes} middle_school rows → premodern`);
+}
+
+function dropPriorityColumn(db: Database.Database) {
+  const cols = db.prepare("PRAGMA table_info(wishlist_items)").all() as Array<{ name: string }>;
+  if (!cols.some((c) => c.name === "priority")) {
+    console.log("— priority column already absent (skipped)");
+    return;
+  }
+  db.exec(`
+    BEGIN TRANSACTION;
+    DROP INDEX IF EXISTS idx_wishlist_format_priority;
+    ALTER TABLE wishlist_items DROP COLUMN priority;
+    CREATE INDEX IF NOT EXISTS idx_wishlist_format ON wishlist_items (format_tag);
+    COMMIT;
+  `);
+  console.log("✓ Dropped wishlist_items.priority column");
+}
+
 function main() {
   const db = new Database(DB_PATH);
   db.pragma("journal_mode = WAL");
@@ -56,6 +86,8 @@ function main() {
 
   addColumnIfMissing(db, "cards", "legalities", "TEXT");
   dropFormatTagCheck(db);
+  migrateMiddleSchoolToPremodern(db);
+  dropPriorityColumn(db);
 
   db.close();
   console.log("✓ Migration complete");
