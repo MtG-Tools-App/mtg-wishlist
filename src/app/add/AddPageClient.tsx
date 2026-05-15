@@ -124,18 +124,18 @@ export function AddPageClient() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="カード名(英語または日本語)"
-            className="flex-1 bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-500 text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="flex-1 bg-surface border border-border text-text placeholder-text-subtle text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-modern"
             required
           />
           <button
             type="submit"
             disabled={searchPending}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm rounded-md transition-colors shrink-0"
+            className="px-4 py-2 bg-cta hover:opacity-90 disabled:opacity-50 text-cta-text text-sm rounded-md transition-opacity shrink-0"
           >
             {searchPending ? "検索中…" : "検索"}
           </button>
         </form>
-        <p className="text-xs text-zinc-500">例: Lightning Bolt または 稲妻</p>
+        <p className="text-xs text-text-subtle">例: Lightning Bolt または 稲妻</p>
       </div>
 
       {/* Filters — visible only after a successful search */}
@@ -156,7 +156,7 @@ export function AddPageClient() {
 
       {/* Results */}
       {searched && filteredResults.length === 0 && !searchPending && (
-        <p className="text-zinc-500 text-sm text-center py-8">
+        <p className="text-text-subtle text-sm text-center py-8">
           カードが見つかりませんでした
         </p>
       )}
@@ -166,7 +166,7 @@ export function AddPageClient() {
           {filteredResults.map((card) => (
             <li
               key={card.scryfall_id}
-              className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden"
+              className="bg-bg border border-border rounded-lg overflow-hidden"
             >
               {/* Card row */}
               <div className="flex gap-3 p-3 items-start">
@@ -176,13 +176,13 @@ export function AddPageClient() {
                   nameJa={card.name_ja}
                   finish={card.finish}
                 >
-                  <p className="text-zinc-500 text-xs">
+                  <p className="text-text-subtle text-xs">
                     {card.set_code.toUpperCase()} #{card.collector_number}
                   </p>
                 </CardHeader>
                 <button
                   onClick={() => handleExpand(card.scryfall_id, card.legalities)}
-                  className="text-xs shrink-0 px-2 py-1 rounded border border-zinc-700 text-zinc-400 hover:border-indigo-500 hover:text-indigo-400 transition-colors"
+                  className="text-xs shrink-0 px-2 py-1 rounded border border-border text-text-muted hover:border-modern hover:text-modern transition-colors"
                 >
                   {expandedId === card.scryfall_id ? "閉じる" : "このカードを追加"}
                 </button>
@@ -190,16 +190,16 @@ export function AddPageClient() {
 
               {/* Inline form */}
               {expandedId === card.scryfall_id && (
-                <div className="border-t border-zinc-800 bg-zinc-950 p-3 flex flex-col gap-3">
+                <div className="border-t border-border bg-surface p-3 flex flex-col gap-3">
                   <div className="grid grid-cols-2 gap-2">
                     <label className="flex flex-col gap-1 col-span-2">
-                      <span className="text-zinc-400 text-xs">使用フォーマット</span>
+                      <span className="text-text-muted text-xs">使用フォーマット</span>
                       <select
                         value={formState.format_tag}
                         onChange={(e) =>
                           setFormState((s) => ({ ...s, format_tag: e.target.value }))
                         }
-                        className="bg-zinc-800 border border-zinc-700 text-zinc-100 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="bg-bg border border-border text-text text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
                       >
                         <option value="">選択してください</option>
                         {getFormatOptions(card.legalities).map((opt) => (
@@ -211,13 +211,13 @@ export function AddPageClient() {
                     </label>
 
                     <label className="flex flex-col gap-1">
-                      <span className="text-zinc-400 text-xs">最低コンディション</span>
+                      <span className="text-text-muted text-xs">最低コンディション</span>
                       <select
                         value={formState.condition_min}
                         onChange={(e) =>
                           setFormState((s) => ({ ...s, condition_min: e.target.value }))
                         }
-                        className="bg-zinc-800 border border-zinc-700 text-zinc-100 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="bg-bg border border-border text-text text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
                       >
                         <option value="">— 問わない —</option>
                         <option value="NM">NM</option>
@@ -227,7 +227,7 @@ export function AddPageClient() {
                     </label>
 
                     <label className="flex flex-col gap-1">
-                      <span className="text-zinc-400 text-xs">目標価格 (¥)</span>
+                      <span className="text-text-muted text-xs">目標価格 (¥)</span>
                       <input
                         type="number"
                         min={0}
@@ -236,14 +236,14 @@ export function AddPageClient() {
                           setFormState((s) => ({ ...s, target_price: e.target.value }))
                         }
                         placeholder="例: 800"
-                        className="bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-600 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="bg-bg border border-border text-text placeholder-text-fade text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
                       />
                     </label>
 
                   </div>
 
                   <label className="flex flex-col gap-1">
-                    <span className="text-zinc-400 text-xs">メモ</span>
+                    <span className="text-text-muted text-xs">メモ</span>
                     <textarea
                       value={formState.notes}
                       onChange={(e) =>
@@ -251,7 +251,7 @@ export function AddPageClient() {
                       }
                       rows={2}
                       placeholder="自由記入"
-                      className="bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-600 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+                      className="bg-bg border border-border text-text placeholder-text-fade text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern resize-none"
                     />
                   </label>
 
@@ -260,7 +260,7 @@ export function AddPageClient() {
                   <button
                     onClick={() => handleAdd(card)}
                     disabled={addPending}
-                    className="self-end px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm rounded-md transition-colors"
+                    className="self-end px-4 py-2 bg-cta hover:opacity-90 disabled:opacity-50 text-cta-text text-sm rounded-md transition-opacity"
                   >
                     {addPending ? "追加中…" : "追加"}
                   </button>
@@ -284,22 +284,22 @@ function FilterStepper({
   onNext: () => void;
 }) {
   return (
-    <div className="inline-flex items-stretch rounded-md border border-zinc-700 overflow-hidden bg-zinc-900">
+    <div className="inline-flex items-stretch rounded-md border border-border overflow-hidden bg-bg">
       <button
         type="button"
         onClick={onPrev}
-        className="px-2 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors"
+        className="px-2 text-text-muted hover:text-text hover:bg-surface transition-colors"
         aria-label="前の選択肢"
       >
         ◀
       </button>
-      <span className="px-3 py-1 text-xs text-zinc-200 self-center min-w-[4em] text-center">
+      <span className="px-3 py-1 text-xs text-text self-center min-w-[4em] text-center">
         {current}
       </span>
       <button
         type="button"
         onClick={onNext}
-        className="px-2 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors"
+        className="px-2 text-text-muted hover:text-text hover:bg-surface transition-colors"
         aria-label="次の選択肢"
       >
         ▶
@@ -307,4 +307,3 @@ function FilterStepper({
     </div>
   );
 }
-

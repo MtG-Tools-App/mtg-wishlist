@@ -51,13 +51,13 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 flex flex-col gap-3"
+      className="bg-bg border border-border rounded-lg p-4 flex flex-col gap-3"
     >
       <div className="grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1">
-          <span className="text-zinc-400 text-xs">価格</span>
+          <span className="text-text-muted text-xs">価格</span>
           <div className="relative">
-            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">
+            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-text-subtle text-sm">
               ¥
             </span>
             <input
@@ -67,17 +67,17 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               placeholder="1000"
-              className="w-full bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-600 text-sm rounded px-2 py-1.5 pl-6 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-full bg-surface border border-border text-text placeholder-text-fade text-sm rounded px-2 py-1.5 pl-6 focus:outline-none focus:ring-1 focus:ring-modern"
             />
           </div>
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-zinc-400 text-xs">ショップ</span>
+          <span className="text-text-muted text-xs">ショップ</span>
           <select
             value={shop}
             onChange={(e) => setShop(e.target.value)}
-            className="bg-zinc-800 border border-zinc-700 text-zinc-100 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="bg-surface border border-border text-text text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
           >
             {SHOPS.map((s) => (
               <option key={s.value} value={s.value}>
@@ -88,11 +88,11 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-zinc-400 text-xs">コンディション</span>
+          <span className="text-text-muted text-xs">コンディション</span>
           <select
             value={condition}
             onChange={(e) => setCondition(e.target.value)}
-            className="bg-zinc-800 border border-zinc-700 text-zinc-100 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="bg-surface border border-border text-text text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
           >
             <option value="">— 未指定 —</option>
             <option value="NM">NM</option>
@@ -102,13 +102,13 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
         </label>
 
         <label className="flex flex-col gap-1 col-span-2 sm:col-span-1">
-          <span className="text-zinc-400 text-xs">URL (任意)</span>
+          <span className="text-text-muted text-xs">URL (任意)</span>
           <input
             type="url"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://..."
-            className="bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-600 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="bg-surface border border-border text-text placeholder-text-fade text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
           />
         </label>
       </div>
@@ -118,9 +118,9 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
           type="checkbox"
           checked={available}
           onChange={(e) => setAvailable(e.target.checked)}
-          className="w-4 h-4 rounded accent-indigo-600"
+          className="w-4 h-4 rounded accent-modern"
         />
-        <span className="text-zinc-300 text-sm">在庫あり</span>
+        <span className="text-text text-sm">在庫あり</span>
       </label>
 
       <ErrorMessage error={error} />
@@ -128,7 +128,7 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
       <button
         type="submit"
         disabled={pending || !price}
-        className="self-end px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm rounded-md transition-colors"
+        className="self-end px-4 py-2 bg-cta hover:opacity-90 disabled:opacity-50 text-cta-text text-sm rounded-md transition-opacity"
       >
         {pending ? "保存中…" : "保存"}
       </button>

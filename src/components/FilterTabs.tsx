@@ -23,8 +23,8 @@ export function FilterTabs() {
           onClick={() => handleTab(tab.value)}
           className={`px-3 py-1.5 text-xs rounded-md font-medium transition-colors ${
             current === tab.value
-              ? "bg-indigo-600 text-white"
-              : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+              ? "bg-cta text-cta-text"
+              : "text-text-muted hover:text-text hover:bg-surface"
           }`}
         >
           {tab.label}

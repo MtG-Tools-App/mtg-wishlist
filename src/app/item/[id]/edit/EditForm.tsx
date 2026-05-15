@@ -41,13 +41,13 @@ export function EditForm({ item }: { item: WishlistRow }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       <div className="grid grid-cols-2 gap-2">
         <label className="flex flex-col gap-1 col-span-2">
-          <span className="text-zinc-400 text-xs">使用フォーマット</span>
+          <span className="text-text-muted text-xs">使用フォーマット</span>
           <select
             value={formState.format_tag}
             onChange={(e) =>
               setFormState((s) => ({ ...s, format_tag: e.target.value }))
             }
-            className="bg-zinc-800 border border-zinc-700 text-zinc-100 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="bg-bg border border-border text-text text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
           >
             <option value="">選択してください</option>
             {getFormatOptions(item.legalities).map((opt) => (
@@ -59,13 +59,13 @@ export function EditForm({ item }: { item: WishlistRow }) {
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-zinc-400 text-xs">最低コンディション</span>
+          <span className="text-text-muted text-xs">最低コンディション</span>
           <select
             value={formState.condition_min}
             onChange={(e) =>
               setFormState((s) => ({ ...s, condition_min: e.target.value }))
             }
-            className="bg-zinc-800 border border-zinc-700 text-zinc-100 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="bg-bg border border-border text-text text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
           >
             <option value="">— 問わない —</option>
             <option value="NM">NM</option>
@@ -75,7 +75,7 @@ export function EditForm({ item }: { item: WishlistRow }) {
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-zinc-400 text-xs">目標価格 (¥)</span>
+          <span className="text-text-muted text-xs">目標価格 (¥)</span>
           <input
             type="number"
             min={0}
@@ -84,14 +84,14 @@ export function EditForm({ item }: { item: WishlistRow }) {
               setFormState((s) => ({ ...s, target_price: e.target.value }))
             }
             placeholder="例: 800"
-            className="bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-600 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="bg-bg border border-border text-text placeholder-text-fade text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
           />
         </label>
 
       </div>
 
       <label className="flex flex-col gap-1">
-        <span className="text-zinc-400 text-xs">メモ</span>
+        <span className="text-text-muted text-xs">メモ</span>
         <textarea
           value={formState.notes}
           onChange={(e) =>
@@ -99,7 +99,7 @@ export function EditForm({ item }: { item: WishlistRow }) {
           }
           rows={2}
           placeholder="自由記入"
-          className="bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-600 text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+          className="bg-bg border border-border text-text placeholder-text-fade text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern resize-none"
         />
       </label>
 
@@ -108,7 +108,7 @@ export function EditForm({ item }: { item: WishlistRow }) {
       <button
         type="submit"
         disabled={pending}
-        className="self-end px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm rounded-md transition-colors"
+        className="self-end px-4 py-2 bg-cta hover:opacity-90 disabled:opacity-50 text-cta-text text-sm rounded-md transition-opacity"
       >
         {pending ? "保存中…" : "保存"}
       </button>
