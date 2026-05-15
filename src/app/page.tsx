@@ -24,8 +24,8 @@ export default async function WishlistPage({
         <EmptyState />
       ) : (
         <ul className="flex flex-col gap-2">
-          {items.map((item) => (
-            <WishlistCard key={item.id} item={item} />
+          {items.map((item, idx) => (
+            <WishlistCard key={item.id} item={item} index={idx} total={items.length} />
           ))}
         </ul>
       )}
@@ -57,9 +57,19 @@ function getCardState(item: WishlistRow): CardState {
   return "normal";
 }
 
+// ── Row background gradient ───────────────────────────────────────────────────
+
+function rowBackground(item: WishlistRow, index: number, total: number): string {
+  const format = item.format_tag;
+  if (!format || format === "other") return "var(--color-bg)";
+  const denom = Math.max(total - 1, 1);
+  const opacity = 35 - (index / denom) * 30;
+  return `color-mix(in srgb, var(--color-${format}) ${opacity}%, var(--color-bg))`;
+}
+
 // ── WishlistCard ──────────────────────────────────────────────────────────────
 
-function WishlistCard({ item }: { item: WishlistRow }) {
+function WishlistCard({ item, index, total }: { item: WishlistRow; index: number; total: number }) {
   const state = getCardState(item);
   const wgUrl = `http://whisper.wisdom-guild.net/card/${encodeURIComponent(
     item.name_en.split(" // ")[0]
@@ -67,7 +77,8 @@ function WishlistCard({ item }: { item: WishlistRow }) {
 
   return (
     <li
-      className={`bg-bg border border-border rounded-lg p-3 flex gap-3 transition-opacity${
+      style={{ backgroundColor: rowBackground(item, index, total) }}
+      className={`border border-border rounded-lg p-3 flex gap-3 transition-opacity${
         state === "sold-out" ? " opacity-60" : ""
       }`}
     >

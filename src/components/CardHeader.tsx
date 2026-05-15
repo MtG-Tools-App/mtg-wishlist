@@ -43,19 +43,10 @@ export function CardHeader({ imageUrl, nameEn, nameJa, finish, children }: CardH
 }
 
 function FoilBadge({ finish }: { finish?: ScryfallFinish }) {
-  if (finish === "foil") {
-    return (
-      <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-modern text-modern-on font-medium shrink-0 leading-none">
-        Foil
-      </span>
-    );
-  }
-  if (finish === "etched") {
-    return (
-      <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-premodern text-premodern-on font-medium shrink-0 leading-none">
-        Etched
-      </span>
-    );
-  }
-  return null;
+  if (finish !== "foil" && finish !== "etched") return null;
+  return (
+    <span className="text-[10px] px-1.5 py-0.5 rounded-md border border-text text-text font-medium shrink-0 leading-none uppercase tracking-wide">
+      {finish === "etched" ? "Etched" : "Foil"}
+    </span>
+  );
 }

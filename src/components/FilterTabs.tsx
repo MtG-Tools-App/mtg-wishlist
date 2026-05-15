@@ -3,6 +3,24 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { FILTER_TABS } from "@/lib/format/formats";
 
+const ACTIVE_BG: Record<string, string> = {
+  "":         "var(--color-other)",
+  modern:     "var(--color-modern)",
+  legacy:     "var(--color-legacy)",
+  pauper:     "var(--color-pauper)",
+  premodern:  "var(--color-premodern)",
+  other:      "var(--color-other)",
+};
+
+const ACTIVE_FG: Record<string, string> = {
+  "":         "var(--color-text)",
+  modern:     "var(--color-modern-on)",
+  legacy:     "var(--color-legacy-on)",
+  pauper:     "var(--color-pauper-on)",
+  premodern:  "var(--color-premodern-on)",
+  other:      "var(--color-other-on)",
+};
+
 export function FilterTabs() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -21,11 +39,16 @@ export function FilterTabs() {
         <button
           key={tab.value}
           onClick={() => handleTab(tab.value)}
-          className={`px-3 py-1.5 text-xs rounded-md font-medium transition-colors ${
+          style={
             current === tab.value
-              ? "bg-cta text-cta-text"
-              : "text-text-muted hover:text-text hover:bg-surface"
-          }`}
+              ? { backgroundColor: ACTIVE_BG[tab.value], color: ACTIVE_FG[tab.value] }
+              : undefined
+          }
+          className={
+            current === tab.value
+              ? "px-3 py-1.5 text-xs rounded-md font-medium"
+              : "px-3 py-1.5 text-xs rounded-md font-medium text-text-muted hover:text-text hover:bg-surface transition-colors"
+          }
         >
           {tab.label}
         </button>
