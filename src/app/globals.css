@@ -1,8 +1,38 @@
 @import "tailwindcss";
 
+@theme {
+  /* Base surfaces */
+  --color-bg:      #F0EEEB;
+  --color-surface: #E8E3DA;
+  --color-text:    #13181B;
+
+  --color-text-muted:  color-mix(in srgb, #13181B 60%, transparent);
+  --color-text-subtle: color-mix(in srgb, #13181B 40%, transparent);
+  --color-text-fade:   color-mix(in srgb, #13181B 25%, transparent);
+  --color-border:      color-mix(in srgb, #13181B 15%, transparent);
+
+  /* Format identity */
+  --color-modern:    #003A6C;
+  --color-legacy:    #FD8973;
+  --color-pauper:    #CCD5DA;
+  --color-premodern: #FFBF65;
+  --color-other:     color-mix(in srgb, #13181B 6%, transparent);
+
+  /* On-color text — best-contrast pair for each format fill */
+  --color-modern-on:    #F0EEEB;
+  --color-legacy-on:    #13181B;
+  --color-pauper-on:    #13181B;
+  --color-premodern-on: #13181B;
+  --color-other-on:     #13181B;
+
+  /* Universal CTA (primary action button) */
+  --color-cta:      #13181B;
+  --color-cta-text: #F0EEEB;
+}
+
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background-color: #09090b;
-  color: #f4f4f5;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   min-height: 100dvh;
 }
