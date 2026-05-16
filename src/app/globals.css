@@ -1,33 +1,60 @@
 @import "tailwindcss";
 
 @theme {
-  /* Base surfaces */
-  --color-bg:      #F0EEEB;
-  --color-surface: #E8E3DA;
-  --color-text:    #13181B;
+  /* Base */
+  --color-bg: #F0EEEB;            /* Magical Moonlight — page bg */
+  --color-text: #003A6C;          /* Ateneo Blue — primary text on bg */
+  --color-text-muted: color-mix(in srgb, #003A6C 60%, transparent);
+  --color-text-subtle: color-mix(in srgb, #003A6C 40%, transparent);
+  --color-text-fade: color-mix(in srgb, #003A6C 25%, transparent);
+  --color-border: color-mix(in srgb, #003A6C 12%, transparent);
 
-  --color-text-muted:  color-mix(in srgb, #13181B 60%, transparent);
-  --color-text-subtle: color-mix(in srgb, #13181B 40%, transparent);
-  --color-text-fade:   color-mix(in srgb, #13181B 25%, transparent);
-  --color-border:      color-mix(in srgb, #13181B 15%, transparent);
+  /* Surfaces */
+  --color-surface: #003A6C;       /* Ateneo Blue — card geometry */
+  --color-surface-text: #F0EEEB;  /* Magical Moonlight — text on surface */
+  --color-surface-subtle: color-mix(in srgb, #F0EEEB 70%, transparent);
+  --color-glass: color-mix(in srgb, #CCD5DA 40%, transparent);
+  --color-glass-strong: color-mix(in srgb, #CCD5DA 60%, transparent);
 
-  /* Format identity */
-  --color-modern:    #003A6C;
-  --color-legacy:    #FD8973;
-  --color-pauper:    #CCD5DA;
-  --color-premodern: #FFBF65;
-  --color-other:     color-mix(in srgb, #13181B 6%, transparent);
+  /* Format identity (left bar + tab active fill) */
+  --color-modern:    #FFBF65;     /* Sea Buckthorn — not Ateneo Blue to avoid blending into card surface */
+  --color-legacy:    #FD8973;     /* Miami Coral */
+  --color-pauper:    #CCD5DA;     /* Polar Drift */
+  --color-premodern: #FFBF65;     /* Sea Buckthorn */
+  --color-other:     color-mix(in srgb, #13181B 8%, transparent);
 
-  /* On-color text — best-contrast pair for each format fill */
-  --color-modern-on:    #F0EEEB;
-  --color-legacy-on:    #13181B;
-  --color-pauper-on:    #13181B;
-  --color-premodern-on: #13181B;
-  --color-other-on:     #13181B;
+  /* Accents */
+  --color-accent-primary:   #FD8973;  /* Miami Coral — main CTAs */
+  --color-accent-secondary: #FFBF65;  /* Sea Buckthorn — notable values (WG link) */
+  --color-cta-text: #F0EEEB;          /* text on Miami Coral fills */
 
-  /* Universal CTA (primary action button) */
-  --color-cta:      #13181B;
-  --color-cta-text: #F0EEEB;
+  /* Radius scale (Apple-aligned) */
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:  12px;
+  --radius-lg:  20px;
+  --radius-xl:  28px;
+  --radius-full: 9999px;
+
+  /* Shadows — two-layer Apple-style */
+  --shadow-sm:
+    0 1px 2px color-mix(in srgb, #003A6C 8%, transparent),
+    0 1px 1px color-mix(in srgb, #003A6C 4%, transparent);
+  --shadow-md:
+    0 2px 6px color-mix(in srgb, #003A6C 10%, transparent),
+    0 1px 2px color-mix(in srgb, #003A6C 6%, transparent);
+  --shadow-lg:
+    0 8px 24px color-mix(in srgb, #003A6C 14%, transparent),
+    0 2px 6px color-mix(in srgb, #003A6C 8%, transparent);
+
+  /* Blur tokens */
+  --blur-sm:  8px;
+  --blur-md: 20px;
+  --blur-lg: 40px;
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
 }
 
 body {
@@ -35,4 +62,18 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   min-height: 100dvh;
+  background-image:
+    radial-gradient(
+      ellipse 80% 60% at 85% 90%,
+      color-mix(in srgb, #FD8973 18%, transparent) 0%,
+      color-mix(in srgb, #FFBF65 10%, transparent) 35%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 15% 100%,
+      color-mix(in srgb, #FFBF65 10%, transparent) 0%,
+      transparent 60%
+    );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
