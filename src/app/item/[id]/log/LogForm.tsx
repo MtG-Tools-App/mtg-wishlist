@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { logPriceAction } from "@/lib/actions/priceLogs";
 import { ErrorMessage } from "@/components/ErrorMessage";
 
-// Values must match LogPriceSchema shop enum
 const SHOPS = [
   { value: "hareruya", label: "hareruya" },
   { value: "bigmagic",  label: "bigmagic" },
@@ -14,6 +13,11 @@ const SHOPS = [
   { value: "mercari",   label: "mercari" },
   { value: "other",     label: "other" },
 ] as const;
+
+const glassInput = {
+  backgroundColor: "var(--color-glass)",
+  backdropFilter: "blur(var(--blur-md))",
+} as const;
 
 export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
   const router = useRouter();
@@ -51,7 +55,8 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-bg border border-border rounded-lg p-4 flex flex-col gap-3"
+      className="border border-border rounded-[var(--radius-lg)] p-4 flex flex-col gap-3"
+      style={{ backgroundColor: "var(--color-glass)", backdropFilter: "blur(var(--blur-md))" }}
     >
       <div className="grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1">
@@ -67,7 +72,8 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               placeholder="1000"
-              className="w-full bg-surface border border-border text-text placeholder-text-fade text-sm rounded px-2 py-1.5 pl-6 focus:outline-none focus:ring-1 focus:ring-modern"
+              className="w-full border border-border text-text placeholder-text-fade text-sm rounded-[var(--radius-md)] px-2 py-1.5 pl-6 focus:outline-none focus:ring-1 focus:ring-accent-secondary"
+              style={glassInput}
             />
           </div>
         </label>
@@ -77,7 +83,8 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
           <select
             value={shop}
             onChange={(e) => setShop(e.target.value)}
-            className="bg-surface border border-border text-text text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
+            className="border border-border text-text text-sm rounded-[var(--radius-md)] px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent-secondary"
+            style={glassInput}
           >
             {SHOPS.map((s) => (
               <option key={s.value} value={s.value}>
@@ -92,7 +99,8 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
           <select
             value={condition}
             onChange={(e) => setCondition(e.target.value)}
-            className="bg-surface border border-border text-text text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
+            className="border border-border text-text text-sm rounded-[var(--radius-md)] px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent-secondary"
+            style={glassInput}
           >
             <option value="">— 未指定 —</option>
             <option value="NM">NM</option>
@@ -108,7 +116,8 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://..."
-            className="bg-surface border border-border text-text placeholder-text-fade text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
+            className="border border-border text-text placeholder-text-fade text-sm rounded-[var(--radius-md)] px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent-secondary"
+            style={glassInput}
           />
         </label>
       </div>
@@ -118,7 +127,7 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
           type="checkbox"
           checked={available}
           onChange={(e) => setAvailable(e.target.checked)}
-          className="w-4 h-4 rounded accent-modern"
+          className="w-4 h-4 rounded accent-accent-secondary"
         />
         <span className="text-text text-sm">在庫あり</span>
       </label>
@@ -128,7 +137,7 @@ export function LogForm({ wishlistItemId }: { wishlistItemId: number }) {
       <button
         type="submit"
         disabled={pending || !price}
-        className="self-end px-4 py-2 bg-cta hover:opacity-90 disabled:opacity-50 text-cta-text text-sm rounded-md transition-opacity"
+        className="self-end px-4 py-2 bg-accent-primary hover:opacity-90 disabled:opacity-50 text-cta-text text-sm rounded-[var(--radius-md)] transition-opacity"
       >
         {pending ? "保存中…" : "保存"}
       </button>

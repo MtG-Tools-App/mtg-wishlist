@@ -25,7 +25,13 @@ export default async function EditPage({
         ← 一覧へ戻る
       </Link>
 
-      <div className="bg-bg border border-border rounded-lg p-3 flex gap-3">
+      <div
+        className="border border-border rounded-[var(--radius-lg)] p-3 flex gap-3"
+        style={{
+          backgroundColor: "color-mix(in srgb, var(--color-surface) 85%, transparent)",
+          backdropFilter: "blur(var(--blur-md))",
+        }}
+      >
         {item.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -36,16 +42,19 @@ export default async function EditPage({
             className="rounded shrink-0 object-cover self-start"
           />
         ) : (
-          <div className="w-[50px] h-[70px] bg-surface rounded shrink-0" />
+          <div
+            className="w-[50px] h-[70px] rounded shrink-0"
+            style={{ backgroundColor: "var(--color-glass)" }}
+          />
         )}
         <div className="min-w-0">
-          <p className="text-text text-sm font-semibold leading-tight">
+          <p className="text-sm font-semibold leading-tight" style={{ color: "var(--color-surface-text)" }}>
             {item.name_en}
           </p>
           {item.name_ja && (
-            <p className="text-text-muted text-xs">{item.name_ja}</p>
+            <p className="text-xs" style={{ color: "var(--color-surface-subtle)" }}>{item.name_ja}</p>
           )}
-          <p className="text-text-subtle text-xs mt-1">
+          <p className="text-xs mt-1" style={{ color: "var(--color-surface-subtle)" }}>
             {item.set_code.toUpperCase()} · {finishLabel(item.finish)}
           </p>
         </div>

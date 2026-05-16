@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { searchCardsAction, addToWishlistAction } from "@/lib/actions/cards";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import type { NormalizedCard } from "@/lib/scryfall/types";
-import { FORMAT_OPTIONS, getFormatOptions, getDefaultFormatTag } from "@/lib/format/formats";
+import { getFormatOptions, getDefaultFormatTag } from "@/lib/format/formats";
 import { CardHeader } from "@/components/CardHeader";
 
 type FormState = {
@@ -21,7 +21,6 @@ const DEFAULT_FORM: FormState = {
   target_price: "",
   notes: "",
 };
-
 
 type LangFilter = "all" | "ja" | "en";
 type FinishFilter = "all" | "foil" | "nonfoil";
@@ -41,7 +40,6 @@ const FINISH_OPTIONS: { value: FinishFilter; label: string }[] = [
 function matchesLang(card: NormalizedCard, filter: LangFilter): boolean {
   if (filter === "all") return true;
   if (filter === "ja") return card.lang === "ja";
-  // EN excludes JA explicitly; other foreign languages still pass.
   return card.lang !== "ja";
 }
 
@@ -50,6 +48,11 @@ function matchesFinish(card: NormalizedCard, filter: FinishFilter): boolean {
   if (filter === "foil") return card.finish === "foil" || card.finish === "etched";
   return card.finish === "nonfoil";
 }
+
+const glassInput = {
+  backgroundColor: "var(--color-glass)",
+  backdropFilter: "blur(var(--blur-md))",
+} as const;
 
 export function AddPageClient() {
   const router = useRouter();
@@ -124,13 +127,14 @@ export function AddPageClient() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="カード名(英語または日本語)"
-            className="flex-1 bg-surface border border-border text-text placeholder-text-subtle text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-modern"
+            className="flex-1 border border-border text-text placeholder-text-subtle text-sm rounded-[var(--radius-md)] px-3 py-2 focus:outline-none focus:ring-1 focus:ring-accent-secondary"
+            style={glassInput}
             required
           />
           <button
             type="submit"
             disabled={searchPending}
-            className="px-4 py-2 bg-cta hover:opacity-90 disabled:opacity-50 text-cta-text text-sm rounded-md transition-opacity shrink-0"
+            className="px-4 py-2 bg-accent-primary hover:opacity-90 disabled:opacity-50 text-cta-text text-sm rounded-[var(--radius-md)] transition-opacity shrink-0"
           >
             {searchPending ? "検索中…" : "検索"}
           </button>
@@ -166,7 +170,11 @@ export function AddPageClient() {
           {filteredResults.map((card) => (
             <li
               key={card.scryfall_id}
-              className="bg-bg border border-border rounded-lg overflow-hidden"
+              className="border border-border rounded-[var(--radius-lg)] overflow-hidden"
+              style={{
+                backgroundColor: "color-mix(in srgb, var(--color-surface) 85%, transparent)",
+                backdropFilter: "blur(var(--blur-md))",
+              }}
             >
               {/* Card row */}
               <div className="flex gap-3 p-3 items-start">
@@ -175,14 +183,19 @@ export function AddPageClient() {
                   nameEn={card.name_en}
                   nameJa={card.name_ja}
                   finish={card.finish}
+                  onSurface
                 >
-                  <p className="text-text-subtle text-xs">
+                  <p className="text-xs" style={{ color: "var(--color-surface-subtle)" }}>
                     {card.set_code.toUpperCase()} #{card.collector_number}
                   </p>
                 </CardHeader>
                 <button
                   onClick={() => handleExpand(card.scryfall_id, card.legalities)}
-                  className="text-xs shrink-0 px-2 py-1 rounded border border-border text-text-muted hover:border-modern hover:text-modern transition-colors"
+                  className="text-xs shrink-0 px-2 py-1 rounded-[var(--radius-sm)] border transition-colors"
+                  style={{
+                    borderColor: "var(--color-glass-strong)",
+                    color: "var(--color-surface-text)",
+                  }}
                 >
                   {expandedId === card.scryfall_id ? "閉じる" : "このカードを追加"}
                 </button>
@@ -190,7 +203,10 @@ export function AddPageClient() {
 
               {/* Inline form */}
               {expandedId === card.scryfall_id && (
-                <div className="border-t border-border bg-surface p-3 flex flex-col gap-3">
+                <div
+                  className="border-t border-glass p-3 flex flex-col gap-3"
+                  style={{ backgroundColor: "var(--color-surface)" }}
+                >
                   <div className="grid grid-cols-2 gap-2">
                     <label className="flex flex-col gap-1 col-span-2">
                       <span className="text-text-muted text-xs">使用フォーマット</span>
@@ -199,7 +215,8 @@ export function AddPageClient() {
                         onChange={(e) =>
                           setFormState((s) => ({ ...s, format_tag: e.target.value }))
                         }
-                        className="bg-bg border border-border text-text text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
+                        className="border border-border text-text text-sm rounded-[var(--radius-md)] px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent-secondary"
+                        style={glassInput}
                       >
                         <option value="">選択してください</option>
                         {getFormatOptions(card.legalities).map((opt) => (
@@ -217,7 +234,8 @@ export function AddPageClient() {
                         onChange={(e) =>
                           setFormState((s) => ({ ...s, condition_min: e.target.value }))
                         }
-                        className="bg-bg border border-border text-text text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
+                        className="border border-border text-text text-sm rounded-[var(--radius-md)] px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent-secondary"
+                        style={glassInput}
                       >
                         <option value="">— 問わない —</option>
                         <option value="NM">NM</option>
@@ -236,10 +254,10 @@ export function AddPageClient() {
                           setFormState((s) => ({ ...s, target_price: e.target.value }))
                         }
                         placeholder="例: 800"
-                        className="bg-bg border border-border text-text placeholder-text-fade text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern"
+                        className="border border-border text-text placeholder-text-fade text-sm rounded-[var(--radius-md)] px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent-secondary"
+                        style={glassInput}
                       />
                     </label>
-
                   </div>
 
                   <label className="flex flex-col gap-1">
@@ -251,7 +269,8 @@ export function AddPageClient() {
                       }
                       rows={2}
                       placeholder="自由記入"
-                      className="bg-bg border border-border text-text placeholder-text-fade text-sm rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-modern resize-none"
+                      className="border border-border text-text placeholder-text-fade text-sm rounded-[var(--radius-md)] px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-accent-secondary resize-none"
+                      style={glassInput}
                     />
                   </label>
 
@@ -260,7 +279,7 @@ export function AddPageClient() {
                   <button
                     onClick={() => handleAdd(card)}
                     disabled={addPending}
-                    className="self-end px-4 py-2 bg-cta hover:opacity-90 disabled:opacity-50 text-cta-text text-sm rounded-md transition-opacity"
+                    className="self-end px-4 py-2 bg-accent-primary hover:opacity-90 disabled:opacity-50 text-cta-text text-sm rounded-[var(--radius-md)] transition-opacity"
                   >
                     {addPending ? "追加中…" : "追加"}
                   </button>
@@ -284,11 +303,14 @@ function FilterStepper({
   onNext: () => void;
 }) {
   return (
-    <div className="inline-flex items-stretch rounded-md border border-border overflow-hidden bg-bg">
+    <div
+      className="inline-flex items-stretch rounded-[var(--radius-md)] border border-border overflow-hidden"
+      style={{ backgroundColor: "var(--color-glass)", backdropFilter: "blur(var(--blur-md))" }}
+    >
       <button
         type="button"
         onClick={onPrev}
-        className="px-2 text-text-muted hover:text-text hover:bg-surface transition-colors"
+        className="px-2 text-text-muted hover:text-text transition-colors"
         aria-label="前の選択肢"
       >
         ◀
@@ -299,7 +321,7 @@ function FilterStepper({
       <button
         type="button"
         onClick={onNext}
-        className="px-2 text-text-muted hover:text-text hover:bg-surface transition-colors"
+        className="px-2 text-text-muted hover:text-text transition-colors"
         aria-label="次の選択肢"
       >
         ▶
