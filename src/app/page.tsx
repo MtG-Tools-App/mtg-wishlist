@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { getWishlistItems, type WishlistRow } from "@/lib/db/queries";
+import { getWishlistItems, getFormatCounts, type WishlistRow } from "@/lib/db/queries";
 import { FilterTabs } from "@/components/FilterTabs";
 import { DeleteButton } from "@/components/DeleteButton";
 import { CardHeader } from "@/components/CardHeader";
+import { buildWisdomGuildUrlFromRow } from "@/lib/format/wisdomGuild";
 import type { ScryfallFinish } from "@/lib/scryfall/types";
 
 export default async function WishlistPage({
@@ -12,12 +13,15 @@ export default async function WishlistPage({
   searchParams: Promise<{ format?: string }>;
 }) {
   const { format } = await searchParams;
-  const items = await getWishlistItems(format ?? null);
+  const [items, counts] = await Promise.all([
+    getWishlistItems(format ?? null),
+    getFormatCounts(),
+  ]);
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-4">
       <Suspense>
-        <FilterTabs />
+        <FilterTabs counts={counts} />
       </Suspense>
 
       {items.length === 0 ? (
@@ -36,10 +40,10 @@ export default async function WishlistPage({
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-24 gap-4">
-      <p className="text-text-subtle text-sm">ウィッシュリストは空です</p>
+      <p className="text-text-muted text-sm">ウィッシュリストは空です</p>
       <Link
         href="/add"
-        className="px-4 py-2 bg-cta hover:opacity-90 text-cta-text text-sm rounded-md transition-opacity"
+        className="px-4 py-2 bg-accent-primary hover:opacity-90 text-cta-text text-sm rounded-[var(--radius-md)] transition-opacity"
       >
         カードを追加する
       </Link>
@@ -47,7 +51,7 @@ function EmptyState() {
   );
 }
 
-// ── State helpers ─────────────────────────────────────────────────────────────
+// ── State helper ──────────────────────────────────────────────────────────────
 
 type CardState = "normal" | "sold-out" | "unconfirmed";
 
@@ -57,55 +61,69 @@ function getCardState(item: WishlistRow): CardState {
   return "normal";
 }
 
-// ── Row background gradient ───────────────────────────────────────────────────
-
-function rowBackground(item: WishlistRow, index: number, total: number): string {
-  const format = item.format_tag;
-  if (!format || format === "other") return "var(--color-bg)";
-  const denom = Math.max(total - 1, 1);
-  const opacity = 35 - (index / denom) * 30;
-  return `color-mix(in srgb, var(--color-${format}) ${opacity}%, var(--color-bg))`;
-}
-
 // ── WishlistCard ──────────────────────────────────────────────────────────────
 
 function WishlistCard({ item, index, total }: { item: WishlistRow; index: number; total: number }) {
   const state = getCardState(item);
-  const wgUrl = `http://whisper.wisdom-guild.net/card/${encodeURIComponent(
-    item.name_en.split(" // ")[0]
-  )}`;
+  const wgUrl = buildWisdomGuildUrlFromRow(item);
+  const barColor = formatBarColor(item.format_tag);
 
   return (
     <li
-      style={{ backgroundColor: rowBackground(item, index, total) }}
-      className={`border border-border rounded-lg p-3 flex gap-3 transition-opacity${
+      className={`relative border border-border rounded-[var(--radius-lg)] p-3 pl-4 flex gap-3 transition-opacity${
         state === "sold-out" ? " opacity-60" : ""
       }`}
+      style={{
+        backgroundColor: "color-mix(in srgb, var(--color-surface) 85%, transparent)",
+        backdropFilter: "blur(var(--blur-md))",
+        boxShadow: "var(--shadow-md)",
+      }}
     >
+      {barColor && (
+        <span
+          aria-hidden
+          className="absolute left-0 top-2 bottom-2 w-[4px] rounded-full"
+          style={{ backgroundColor: barColor }}
+        />
+      )}
+
       <CardHeader
         imageUrl={item.image_url}
         nameEn={item.name_en}
         nameJa={item.name_ja}
         finish={item.finish as ScryfallFinish}
+        onSurface
       >
-        <p className="text-text-subtle text-xs">
+        <p className="text-xs" style={{ color: "var(--color-surface-subtle)" }}>
           {item.set_code.toUpperCase()} #{item.collector_number}
         </p>
 
-        <PriceSection item={item} state={state} />
+        <p className="text-xs" style={{ color: "var(--color-surface-subtle)" }}>
+          目標:{" "}
+          <span style={{ color: "var(--color-surface-text)" }}>
+            {item.target_price != null
+              ? `¥${item.target_price.toLocaleString("ja-JP")}`
+              : "—"}
+          </span>
+        </p>
 
         <div className="flex gap-2 mt-1 flex-wrap items-center">
           <a
             href={wgUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-modern hover:opacity-80 transition-opacity"
+            className="text-xs text-accent-secondary hover:opacity-80 transition-opacity"
           >
-            Wisdom Guild ↗
+            WG ↗
           </a>
           <Link
             href={`/item/${item.id}/edit`}
-            className="text-xs px-2 py-0.5 rounded bg-surface hover:bg-border text-text transition-colors"
+            className="text-xs px-2 py-0.5 rounded-[var(--radius-sm)] transition-colors"
+            style={{
+              backgroundColor: "var(--color-glass)",
+              backdropFilter: "blur(var(--blur-sm))",
+              color: "var(--color-surface-text)",
+            }}
           >
             編集
           </Link>
@@ -116,69 +134,7 @@ function WishlistCard({ item, index, total }: { item: WishlistRow; index: number
   );
 }
 
-// ── Price section ─────────────────────────────────────────────────────────────
-
-function PriceSection({ item, state }: { item: WishlistRow; state: CardState }) {
-  const targetStr = item.target_price != null ? formatYen(item.target_price) : "—";
-  const atTarget =
-    item.target_price != null &&
-    item.latest_price != null &&
-    item.latest_price <= item.target_price;
-
-  if (state === "unconfirmed") {
-    return (
-      <div className="flex items-center gap-3 text-xs flex-wrap">
-        <span className="text-text-subtle">
-          目標: <span className="text-text">{targetStr}</span>
-        </span>
-        <span className="text-text-subtle italic">未確認</span>
-      </div>
-    );
-  }
-
-  if (state === "sold-out") {
-    return (
-      <div className="flex items-center gap-2 text-xs flex-wrap">
-        <span className="text-text-subtle">
-          目標: <span className="text-text">{targetStr}</span>
-        </span>
-        <span className="text-text-subtle flex items-center gap-1.5 flex-wrap">
-          最新:{" "}
-          <span className={`line-through ${atTarget ? "text-modern" : "text-text"}`}>
-            {formatYen(item.latest_price!)}
-          </span>
-          <span className="bg-surface border border-border text-text-muted font-medium px-1.5 py-0.5 rounded">
-            売り切れ
-          </span>
-          {item.latest_shop && (
-            <span className="text-text-fade">({item.latest_shop})</span>
-          )}
-        </span>
-      </div>
-    );
-  }
-
-  // Normal
-  return (
-    <div className="flex items-center gap-3 text-xs flex-wrap">
-      <span className="text-text-subtle">
-        目標: <span className="text-text">{targetStr}</span>
-      </span>
-      <span className="text-text-subtle">
-        最新:{" "}
-        <span className={atTarget ? "text-modern font-semibold" : "text-text"}>
-          {formatYen(item.latest_price!)}
-        </span>
-        {item.latest_shop && (
-          <span className="text-text-fade ml-1">({item.latest_shop})</span>
-        )}
-      </span>
-    </div>
-  );
-}
-
-// ── Utilities ─────────────────────────────────────────────────────────────────
-
-function formatYen(price: number) {
-  return `¥${price.toLocaleString("ja-JP")}`;
+function formatBarColor(tag: string | null): string | null {
+  if (!tag || tag === "other") return null;
+  return `var(--color-${tag})`;
 }
