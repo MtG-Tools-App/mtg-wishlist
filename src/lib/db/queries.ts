@@ -195,3 +195,16 @@ export async function insertPriceLog(log: {
     ]
   );
 }
+
+export interface FormatCount {
+  format_tag: string | null;
+  count: number;
+}
+
+export async function getFormatCounts(): Promise<FormatCount[]> {
+  return all<FormatCount>(
+    `SELECT format_tag, COUNT(*) AS count
+       FROM wishlist_items
+      GROUP BY format_tag`
+  );
+}
