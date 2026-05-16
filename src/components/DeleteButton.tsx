@@ -28,7 +28,10 @@ export function DeleteButton({ id, name_en }: { id: number; name_en: string }) {
       <button
         onClick={handleDelete}
         disabled={pending}
-        className="min-w-[32px] min-h-[32px] flex items-center justify-center text-xs text-text-fade hover:text-text-muted disabled:opacity-40 transition-colors px-2"
+        className="min-w-[32px] min-h-[32px] flex items-center justify-center text-xs disabled:opacity-40 transition-colors px-2"
+        style={{ color: "var(--color-surface-subtle)" }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-accent-primary)")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-surface-subtle)")}
         aria-label={`${name_en}を削除`}
       >
         {pending ? "…" : "削除"}

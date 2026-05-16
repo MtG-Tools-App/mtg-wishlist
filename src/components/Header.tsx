@@ -16,7 +16,10 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-20 bg-bg border-b border-border">
+    <header
+      className="sticky top-0 z-20 border-b border-border"
+      style={{ backgroundColor: "var(--color-glass-strong)", backdropFilter: "blur(var(--blur-md))" }}
+    >
       <div className="max-w-2xl mx-auto px-4 h-12 flex items-center justify-between">
         <button
           onClick={handleTitleClick}
@@ -28,13 +31,17 @@ export function Header() {
         <nav className="flex gap-5 text-sm">
           <Link
             href="/"
-            className="text-text-muted hover:text-text transition-colors"
+            className={
+              pathname === "/"
+                ? "text-text underline transition-colors"
+                : "text-text-muted hover:text-text transition-colors"
+            }
           >
             一覧
           </Link>
           <Link
             href="/add"
-            className="text-modern hover:opacity-80 transition-opacity font-medium"
+            className="text-accent-primary hover:opacity-80 transition-opacity font-medium"
           >
             ＋ 追加
           </Link>
